@@ -3,200 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kem Billones | Post-Production Engineer & Video Editor</title>
+    <title>Kem Billones | Commercial Post-Production & Video Editor</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #38bdf8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-color: #0b0b0c;
+            --text-color: #ffffff;
+            --muted-color: #707075;
+            --border-color: #1c1c1e;
+            --accent-color: #ffffff;
+            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            line-height: 1.6;
-            padding: 0 20px;
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            letter-spacing: -0.01em;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 40px;
         }
+
+        @media (max-width: 768px) {
+            body { padding: 0 20px; }
+        }
+
+        /* Minimal Floating Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        nav .contact-link {
+            color: var(--muted-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        nav .contact-link:hover {
+            color: var(--text-color);
+        }
+
+        /* Hero/Profile Header */
         header {
-            max-width: 1000px;
-            margin: 60px auto 40px auto;
+            max-width: 1400px;
+            margin: 80px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            header { grid-template-columns: 1fr; margin: 40px auto; }
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+        }
+
+        header p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--muted-color);
+            align-self: end;
+        }
+
+        /* Cinematic Portfolio Grid */
+        .portfolio-grid {
+            max-width: 1400px;
+            margin: 0 auto 100px auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .portfolio-grid { grid-template-columns: 1fr; gap: 30px; }
+        }
+
+        .work-item {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Cinema Aspect Ratio */
+            height: 0;
+            background: #121214;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Smooth scale up interaction */
+        .work-item:hover .video-container {
+            transform: scale(1.015);
+            border-color: #3a3a3c;
+        }
+
+        .work-meta {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .work-meta h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .work-meta p {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted-color);
+            margin-top: 2px;
+        }
+
+        /* Technical Breakdown & Case Study Section */
+        .editorial-section {
+            max-width: 1400px;
+            margin: 0 auto 120px auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 60px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 60px;
+        }
+
+        @media (max-width: 900px) {
+            .editorial-section { grid-template-columns: 1fr; gap: 30px; }
+        }
+
+        .editorial-section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .editorial-content h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .editorial-content ul {
+            list-style: none;
+        }
+
+        .editorial-content ul li {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--muted-color);
+            margin-bottom: 25px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .editorial-content ul li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--muted-color);
+        }
+
+        .toolkit-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .toolkit-tags span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 3px;
+            color: var(--muted-color);
+        }
+
+        /* Footer Call to Action */
+        footer {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 0 60px 0;
+            border-top: 1px solid var(--border-color);
             text-align: center;
         }
-        header h1 { font-size: 2.5rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.05em; }
-        header p { color: var(--accent-color); font-size: 1.2rem; font-weight: 500; margin-top: 5px; }
-        .container { max-width: 1000px; margin: 0 auto 80px auto; }
-        
-        /* Bio Section */
-        .bio-section { margin-bottom: 40px; background: var(--card-bg); padding: 30px; border-radius: 12px; }
-        .bio-section p { font-size: 1.1rem; color: var(--text-muted); }
 
-        /* Case Study Block */
-        .case-study {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid #334155;
-            padding: 35px;
-            border-radius: 16px;
-            margin-bottom: 40px;
+        footer h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
         }
-        .case-study h2 { color: var(--text-main); margin-bottom: 15px; font-size: 1.8rem; }
-        .case-study .tag { display: inline-block; background: #0369a1; color: #e0f2fe; padding: 3px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 20px; }
-        .case-study h3 { color: var(--accent-color); font-size: 1.1rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
-        .case-study ul { list-style-type: none; margin-bottom: 25px; }
-        .case-study ul li { margin-bottom: 10px; padding-left: 20px; position: relative; color: var(--text-muted); }
-        .case-study ul li::before { content: "⚡"; position: absolute; left: 0; color: var(--accent-color); }
 
-        /* Video Grid */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+        footer a {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px solid var(--text-color);
+            padding-bottom: 4px;
+            transition: opacity 0.2s ease;
         }
-        @media (max-width: 500px) { .video-grid { grid-template-columns: 1fr; } }
-        .video-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #334155; }
-        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .video-info { padding: 15px; }
-        .video-info h4 { font-size: 1rem; font-weight: 600; color: var(--text-main); }
 
-        /* Toolkit & Services Grid */
-        .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
-        @media (max-width: 768px) { .grid-two { grid-template-columns: 1fr; } }
-        .panel { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid #334155; }
-        .panel h3 { margin-bottom: 15px; border-bottom: 2px solid #334155; padding-bottom: 8px; font-size: 1.3rem; }
-        .skill-list { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; }
-        .skill-list li { background: #334155; padding: 5px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; }
-        
-        .service-item { margin-bottom: 15px; }
-        .service-item strong { color: var(--accent-color); display: block; }
-        .service-item span { color: var(--text-muted); font-size: 0.95rem; }
-
-        /* Contact Footer */
-        footer { text-align: center; padding: 40px 0; border-top: 1px solid #334155; }
-        footer p { color: var(--text-muted); margin-bottom: 15px; }
-        .btn { display: inline-block; background: var(--accent-color); color: #0f172a; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 700; transition: transform 0.2s; }
-        .btn:hover { transform: translateY(-2px); }
+        footer a:hover {
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
+    <nav>
+        <div class="logo">Kem Billones</div>
+        <a class="contact-link" href="mailto:kemuel.billones@gmail.com">kemuel.billones@gmail.com</a>
+    </nav>
+
     <header>
-        <h1>KEM BILLONES</h1>
-        <p>Post-Production Engineer & Multi-Cam Video Editor</p>
+        <h1>Post-Production Engineer & Multi-Cam Editor.</h1>
+        <p>A decade mastering Broadcast Media, Post-Production, and high-fidelity multitrack digital architectures. Specializing in rapid-turnaround footage rescue, forensic noise calibration, and invisible continuity edits for premium formats.</p>
     </header>
 
-    <div class="container">
+    <main class="portfolio-grid">
         
-        <section class="bio-section">
-            <p>Over a decade of hands-on expertise spanning Broadcast Media, Post-Production, Live Sound, and premium episodic digital media. Specializing in rapid-turnaround multicam execution, forensic audio restoration, and advanced visual narrative pacing for high-profile clients and global audiences.</p>
-        </section>
-
-        <section class="case-study">
-            <span class="tag">Featured Production Case Study</span>
-            <h2>SHE MD Podcast (Celebrity Multi-Cam Production)</h2>
-            
-            <h3>The Operational Challenge</h3>
-            <ul>
-                <li>Managing, syncing, and editing high-profile episodes from raw multitrack asset packages featuring up to 5 simultaneous 4K video streams.</li>
-                <li>Correcting extreme technical production issues live-to-tape: repairing poor gain staging, mitigating severe acoustic room echo, and extracting heavy mic bleed across multiple active lines.</li>
-                <li>Executing aggressive structural pacing to compress 1.5 to 2 hours of spontaneous conversational footage into tight, high-impact sub-60-minute masters.</li>
-                <li>Protecting seamless continuity through strategic dialogue overlapping, pulling patch audio from alternate session timelines, and cutting clean reaction framing to mask heavy adjustments.</li>
-                <li>Meeting a non-negotiable 24-to-48-hour delivery workflow window without compromising broadcast standards.</li>
-            </ul>
-
-            <h3>The Execution Toolkit</h3>
-            <ul class="skill-list" style="display:flex; flex-wrap:wrap; gap:8px;">
-                <li style="background:#0369a1;">Forensic Dialogue Cleaning</li>
-                <li style="background:#0369a1;">Primary Log Calibration</li>
-                <li style="background:#0369a1;">Continuity Stitching</li>
-                <li style="background:#0369a1;">Multitrack Optimization</li>
-            </ul>
-        </section>
-
-        <h2 style="margin-bottom: 20px; font-size: 1.5rem; tracking: -0.02em;">Recent Multi-Cam Video Portfolios</h2>
-        <section class="video-grid">
-            
-            <div class="video-card">
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/Bzhj_h4-kFQ" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h4>Sofia Grainge | Pregnancy, Postpartum Complications & PCOS</h4>
-                </div>
+        <div class="work-item">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/Bzhj_h4-kFQ?modestbranding=1&rel=0" allowfullscreen></iframe>
             </div>
-
-            <div class="video-card">
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/FP4cLm-K8c4" allowfullscreen></iframe>
+            <div class="work-meta">
+                <div>
+                    <h3>Sofia Grainge | Postpartum Complications & PCOS</h3>
+                    <p>SHE MD Podcast</p>
                 </div>
-                <div class="video-info">
-                    <h4>Jay Shetty | Relationships, Passion, and Finding Purpose</h4>
-                </div>
+                <p>Editor / Audio Post</p>
             </div>
-
-            <div class="video-card">
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/-thyvBdpxZU" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h4>Kendall Toole | From Peloton to Health Advocate</h4>
-                </div>
-            </div>
-
-            <div class="video-card">
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/WFze9zfF62c" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <h4>Tay Lautner | Mental Health Journey & Long-Term Care Insights</h4>
-                </div>
-            </div>
-
-        </section>
-
-        <div class="grid-two">
-            
-            <div class="panel">
-                <h3>Technical Suite</h3>
-                <ul class="skill-list">
-                    <li>Avid Pro Tools</li>
-                    <li>DaVinci Resolve</li>
-                    <li>Adobe Premiere Pro</li>
-                    <li>Adobe Audition</li>
-                    <li>Reaper</li>
-                    <li>iZotope RX8</li>
-                    <li>Waves Audio</li>
-                    <li>Acon Digital</li>
-                </ul>
-            </div>
-
-            <div class="panel">
-                <h3>Services Provided</h3>
-                <div class="service-item">
-                    <strong>Podcast Production & Audio Engineering</strong>
-                    <span>End-to-end mastering, loudness leveling, multi-mic matching, and vocal preservation.</span>
-                </div>
-                <div class="service-item">
-                    <strong>Multi-Cam Video Editing & Color Grading</strong>
-                    <span>Skin tone normalization, multi-angle pacing, dynamic short-form formatting, and asset optimization.</span>
-                </div>
-                <div class="service-item">
-                    <strong>Technical Virtual Assistance</strong>
-                    <span>Project tracking, media management, metadata orchestration, and operational asset logic.</span>
-                </div>
-            </div>
-
         </div>
 
-        <footer>
-            <p>Ready to upgrade your production assets to pristine, studio-grade quality?</p>
-            <a href="mailto:kemuel.billones@gmail.com" class="btn">Get In Touch Directly</a>
-        </footer>
+        <div class="work-item">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/FP4cLm-K8c4?modestbranding=1&rel=0" allowfullscreen></iframe>
+            </div>
+            <div class="work-meta">
+                <div>
+                    <h3>Jay Shetty | Passion and Finding Purpose</h3>
+                    <p>SHE MD Podcast</p>
+                </div>
+                <p>Editor / Audio Post</p>
+            </div>
+        </div>
 
-    </div>
+        <div class="work-item">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/-thyvBdpxZU?modestbranding=1&rel=0" allowfullscreen></iframe>
+            </div>
+            <div class="work-meta">
+                <div>
+                    <h3>Kendall Toole | Health Advocate Feature</h3>
+                    <p>SHE MD Podcast</p>
+                </div>
+                <p>Editor / Audio Post</p>
+            </div>
+        </div>
 
-</body>
-</html>
+        <div class="work-item">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/WFze9zfF62c?modestbranding=1&rel=0" allowfullscreen></iframe>
+            </div>
+            <div class="work-meta">
+                <div>
+                    <h3>Tay Lautner | Mental Health & Long-Term Care</h3>
+                    <p>SHE MD Podcast</p>
+                </div>
+                <p>Editor / Audio Post</p>
+            </div>
+        </div>
+
+    </main>
+
+    <section class="editorial-section">
+        <h2>Production<br>Rescue</h2>
+        <div class="editorial-content">
+            <h3>Case Study: Managing High-Profile Multitrack Sessions Under Pressure</h3>
+            <ul>
+                <li><strong>Mismatched Asset Synchronization:</strong> Aligned raw multitrack delivery loads involving 5 concurrent 4K video feeds alongside distinct unlinked multi-microphone channels
