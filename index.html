@@ -90,10 +90,22 @@
             align-self: end;
         }
 
-        /* Cinematic Portfolio Grid */
+        /* Section Headers */
+        .section-title {
+            max-width: 1400px;
+            margin: 60px auto 25px auto;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        /* Long-Form Cinema Grid (16:9) */
         .portfolio-grid {
             max-width: 1400px;
-            margin: 0 auto 100px auto;
+            margin: 0 auto 60px auto;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
@@ -101,6 +113,22 @@
 
         @media (max-width: 900px) {
             .portfolio-grid { grid-template-columns: 1fr; gap: 30px; }
+        }
+
+        /* Short-Form Vertical Grid (9:16) */
+        .reels-grid {
+            max-width: 1400px;
+            margin: 0 auto 100px auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .reels-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        }
+        @media (max-width: 600px) {
+            .reels-grid { grid-template-columns: 1fr; }
         }
 
         .work-item {
@@ -111,14 +139,17 @@
 
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 Cinema Aspect Ratio */
-            height: 0;
+            width: 100%;
             background: #121214;
             border-radius: 4px;
             overflow: hidden;
             border: 1px solid var(--border-color);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
+        /* Enforce Perfect Proportions natively */
+        .landscape { aspect-ratio: 16 / 9; }
+        .vertical { aspect-ratio: 9 / 16; }
 
         .video-container iframe {
             position: absolute;
@@ -129,7 +160,6 @@
             border: 0;
         }
 
-        /* Smooth scale up interaction */
         .work-item:hover .video-container {
             transform: scale(1.015);
             border-color: #3a3a3c;
@@ -156,7 +186,7 @@
             margin-top: 2px;
         }
 
-        /* Technical Breakdown & Case Study Section */
+        /* Technical Case Study Section */
         .editorial-section {
             max-width: 1400px;
             margin: 0 auto 120px auto;
@@ -264,10 +294,11 @@
         <p>A decade mastering Broadcast Media, Post-Production, and high-fidelity multitrack digital architectures. Specializing in rapid-turnaround footage rescue, forensic noise calibration, and invisible continuity edits for premium formats.</p>
     </header>
 
+    <h2 class="section-title">01 / Long-Form Multi-Cam Masters</h2>
     <main class="portfolio-grid">
         
         <div class="work-item">
-            <div class="video-container">
+            <div class="video-container landscape">
                 <iframe src="https://www.youtube.com/embed/Bzhj_h4-kFQ?modestbranding=1&rel=0" allowfullscreen></iframe>
             </div>
             <div class="work-meta">
@@ -280,7 +311,7 @@
         </div>
 
         <div class="work-item">
-            <div class="video-container">
+            <div class="video-container landscape">
                 <iframe src="https://www.youtube.com/embed/FP4cLm-K8c4?modestbranding=1&rel=0" allowfullscreen></iframe>
             </div>
             <div class="work-meta">
@@ -292,37 +323,78 @@
             </div>
         </div>
 
-        <div class="work-item">
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/-thyvBdpxZU?modestbranding=1&rel=0" allowfullscreen></iframe>
-            </div>
-            <div class="work-meta">
-                <div>
-                    <h3>Kendall Toole | Health Advocate Feature</h3>
-                    <p>SHE MD Podcast</p>
-                </div>
-                <p>Editor / Audio Post</p>
-            </div>
-        </div>
-
-        <div class="work-item">
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/WFze9zfF62c?modestbranding=1&rel=0" allowfullscreen></iframe>
-            </div>
-            <div class="work-meta">
-                <div>
-                    <h3>Tay Lautner | Mental Health & Long-Term Care</h3>
-                    <p>SHE MD Podcast</p>
-                </div>
-                <p>Editor / Audio Post</p>
-            </div>
-        </div>
-
     </main>
+
+    <h2 class="section-title">02 / Short-Form High-Engagement Reels</h2>
+    <section class="reels-grid">
+        
+        <div class="work-item">
+            <div class="video-container vertical">
+                <iframe src="https://www.instagram.com/reel/CyLmD7psw44/embed" allowfullscreen></iframe>
+            </div>
+            <div class="work-meta">
+                <div>
+                    <h3>Creative Cutdown / Micro-Narrative 01</h3>
+                    <p>Social Campaign</p>
+                </div>
+                <p>9:16 Edit</p>
+            </div>
+        </div>
+
+        <div class="work-item">
+            <div class="video-container vertical">
+                <iframe src="https://www.instagram.com/reel/Cy4HVfvB0r9/embed" allowfullscreen></iframe>
+            </div>
+            <div class="work-meta">
+                <div>
+                    <h3>Creative Cutdown / Micro-Narrative 02</h3>
+                    <p>Social Campaign</p>
+                </div>
+                <p>9:16 Edit</p>
+            </div>
+        </div>
+
+        <div class="work-item">
+            <div class="video-container vertical">
+                <iframe src="https://www.instagram.com/reel/CyOhMdrClg4/embed" allowfullscreen></iframe>
+            </div>
+            <div class="work-meta">
+                <div>
+                    <h3>Creative Cutdown / Micro-Narrative 03</h3>
+                    <p>Social Campaign</p>
+                </div>
+                <p>9:16 Edit</p>
+            </div>
+        </div>
+
+    </section>
 
     <section class="editorial-section">
         <h2>Production<br>Rescue</h2>
         <div class="editorial-content">
             <h3>Case Study: Managing High-Profile Multitrack Sessions Under Pressure</h3>
             <ul>
-                <li><strong>Mismatched Asset Synchronization:</strong> Aligned raw multitrack delivery loads involving 5 concurrent 4K video feeds alongside distinct unlinked multi-microphone channels
+                <li><strong>Mismatched Asset Synchronization:</strong> Aligned raw multitrack delivery loads involving 5 concurrent 4K video feeds alongside distinct unlinked multi-microphone channels.</li>
+                <li><strong>Forensic Audio Restoration:</strong> Remediated critical tracking issues on the fly, eliminating heavy ambient room acoustic echoes, erratic gain stages, and bleed signals across open multi-channel arrays via advanced spectral repair pipelines.</li>
+                <li><strong>Color Timing & Balancing:</strong> Re-calibrated uncorrected logs lacking reference gray/white calibration targets to maintain flawless, matching skin tones under strict broadcast guidelines.</li>
+                <li><strong>Structural Narrative Pacing:</strong> Condensed 1.5 to 2 hours of unscripted raw conversational elements into high-impact sub-60-minute masters while defending rhythm and comedic timing.</li>
+                <li><strong>Invisible Continuity Stitching:</strong> Covered intrusive structural timing adjustments requested by clients by constructing fluid audio crossovers and deploying multi-cam reaction layers to mask aggressive timeline jumps.</li>
+            </ul>
+            <div class="toolkit-tags">
+                <span>Avid Pro Tools</span>
+                <span>DaVinci Resolve</span>
+                <span>Adobe Premiere Pro</span>
+                <span>iZotope RX8</span>
+                <span>Acon Digital</span>
+                <span>Waves Audio</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <h2>Let's build something clean.</h2>
+        <a href="mailto:kemuel.billones@gmail.com">Get in touch directly</a>
+    </footer>
+
+</body>
+</html>
