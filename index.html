@@ -51,6 +51,11 @@
             text-transform: uppercase;
         }
 
+        nav .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
         nav .contact-link {
             color: var(--muted-color);
             text-decoration: none;
@@ -59,7 +64,7 @@
             transition: color 0.2s ease;
         }
 
-        nav .contact-link:hover {
+        nav .contact-link:hover, nav .contact-link.active {
             color: var(--text-color);
         }
 
@@ -93,7 +98,7 @@
         /* Section Headers */
         .section-title {
             max-width: 1400px;
-            margin: 60px auto 25px auto;
+            margin: 80px auto 30px auto;
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -102,10 +107,10 @@
             padding-bottom: 15px;
         }
 
-        /* Long-Form Cinema Grid (16:9) */
+        /* Landscape Grid (16:9) */
         .portfolio-grid {
             max-width: 1400px;
-            margin: 0 auto 60px auto;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
@@ -118,7 +123,7 @@
         /* Short-Form Vertical Grid (9:16) */
         .reels-grid {
             max-width: 1400px;
-            margin: 0 auto 100px auto;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 40px;
@@ -129,6 +134,47 @@
         }
         @media (max-width: 600px) {
             .reels-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Corporate Editorial Links Layout */
+        .editorial-row {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .editorial-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+            text-decoration: none;
+            color: inherit;
+            transition: opacity 0.2s ease;
+        }
+
+        .editorial-card:hover {
+            opacity: 0.8;
+        }
+
+        .editorial-card-left h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .editorial-card-left p {
+            font-size: 0.95rem;
+            color: var(--muted-color);
+            margin-top: 4px;
+        }
+
+        .editorial-card-right .arrow-btn {
+            font-size: 1.2rem;
+            color: var(--muted-color);
         }
 
         .work-item {
@@ -147,7 +193,6 @@
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Enforce Perfect Proportions natively */
         .landscape { aspect-ratio: 16 / 9; }
         .vertical { aspect-ratio: 9 / 16; }
 
@@ -161,7 +206,7 @@
         }
 
         .work-item:hover .video-container {
-            transform: scale(1.015);
+            transform: scale(1.012);
             border-color: #3a3a3c;
         }
 
@@ -173,7 +218,7 @@
         }
 
         .work-meta h3 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             letter-spacing: -0.02em;
         }
@@ -186,10 +231,10 @@
             margin-top: 2px;
         }
 
-        /* Technical Case Study Section */
+        /* Case Studies Layout */
         .editorial-section {
             max-width: 1400px;
-            margin: 0 auto 120px auto;
+            margin: 120px auto;
             border-top: 1px solid var(--border-color);
             padding-top: 60px;
             display: grid;
@@ -198,18 +243,18 @@
         }
 
         @media (max-width: 900px) {
-            .editorial-section { grid-template-columns: 1fr; gap: 30px; }
+            .editorial-section { grid-template-columns: 1fr; gap: 30px; margin: 60px auto; }
         }
 
         .editorial-section h2 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .editorial-content h3 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 20px;
             letter-spacing: -0.02em;
@@ -217,13 +262,14 @@
 
         .editorial-content ul {
             list-style: none;
+            margin-bottom: 40px;
         }
 
         .editorial-content ul li {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             line-height: 1.6;
             color: var(--muted-color);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             position: relative;
             padding-left: 25px;
         }
@@ -243,7 +289,7 @@
         }
 
         .toolkit-tags span {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 500;
             border: 1px solid var(--border-color);
             padding: 6px 14px;
@@ -267,9 +313,16 @@
             margin-bottom: 20px;
         }
 
+        footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
         footer a {
             color: var(--text-color);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             text-decoration: none;
             border-bottom: 2px solid var(--text-color);
@@ -286,15 +339,18 @@
 
     <nav>
         <div class="logo">Kem Billones</div>
-        <a class="contact-link" href="mailto:kemuel.billones@gmail.com">kemuel.billones@gmail.com</a>
+        <div class="nav-links">
+            <a class="contact-link" href="https://tinyurl.com/n2dcuywr" target="_blank">IMDb Credits</a>
+            <a class="contact-link" href="mailto:kemuel.billones@gmail.com">kemuel.billones@gmail.com</a>
+        </div>
     </nav>
 
     <header>
         <h1>Post-Production Engineer & Multi-Cam Editor.</h1>
-        <p>A decade mastering Broadcast Media, Post-Production, and high-fidelity multitrack digital architectures. Specializing in rapid-turnaround footage rescue, forensic noise calibration, and invisible continuity edits for premium formats.</p>
+        <p>A decade mastering Broadcast Media, Post-Production engineering, and high-fidelity multitrack digital architectures. Specializing in rapid-turnaround footage rescue, forensic noise calibration, and invisible narrative pacing for global formats.</p>
     </header>
 
-    <h2 class="section-title">01 / Long-Form Multi-Cam Masters</h2>
+    <h2 class="section-title">01 / Featured Video Work & Multi-Cam Masters</h2>
     <main class="portfolio-grid">
         
         <div class="work-item">
@@ -325,7 +381,47 @@
 
     </main>
 
-    <h2 class="section-title">02 / Short-Form High-Engagement Reels</h2>
+    <h2 class="section-title">02 / Forensic Engineering & Sound Restoration</h2>
+    <main class="portfolio-grid">
+        
+        <div class="work-item">
+            <div class="video-container landscape">
+                <iframe src="https://www.youtube.com/embed/ZeXhLcCj3x8?modestbranding=1&rel=0" allowfullscreen></iframe>
+            </div>
+            <div class="work-meta">
+                <div>
+                    <h3>Spectral Audio Repair & Real-Time Isolation Demo</h3>
+                    <p>Engineering Showcase</p>
+                </div>
+                <p>DeNoise / DeVerb / EQ / Comp</p>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; justify-content: center; border-left: 1px solid var(--border-color); padding-left: 40px;" class="editorial-content">
+            <h3 style="font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-color); margin-bottom: 10px;">Forensic Rescue Metrics</h3>
+            <p style="color: var(--text-color); font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">
+                Demonstrated tracking methodology for extreme signal remediation: targets multi-channel room echo, masking heavy low-frequency phase artifacts, and extracting bleed elements while maintaining pristine vocal transparency.
+            </p>
+        </div>
+
+    </main>
+
+    <h2 class="section-title">03 / Corporate & Executive Podcast Production</h2>
+    <section class="editorial-row">
+        
+        <a href="https://www.partneringleadership.com/how-to-lead-your-organization-through-change-to-achieve-hard-to-imagine-results-in-uncertain-and-volatile-times-with-john-kotter-global-thought-leader/" target="_blank" class="editorial-card">
+            <div class="editorial-card-left">
+                <h3>Partnering Leadership Podcast — John Kotter Feature</h3>
+                <p>Full Audio Engineering, Master Leveling, Narrative Structure, and Executive Production for Global Thought Leadership Systems.</p>
+            </div>
+            <div class="editorial-card-right">
+                <span class="arrow-btn">↗</span>
+            </div>
+        </a>
+
+    </section>
+
+    <h2 class="section-title">04 / Short-Form High-Engagement Reels</h2>
     <section class="reels-grid">
         
         <div class="work-item">
@@ -393,7 +489,10 @@
 
     <footer>
         <h2>Let's build something clean.</h2>
-        <a href="mailto:kemuel.billones@gmail.com">Get in touch directly</a>
+        <div class="footer-links">
+            <a href="mailto:kemuel.billones@gmail.com">Email</a>
+            <a href="https://tinyurl.com/n2dcuywr" target="_blank">IMDb Profile</a>
+        </div>
     </footer>
 
 </body>
