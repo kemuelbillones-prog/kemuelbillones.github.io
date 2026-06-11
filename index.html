@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kem Billones | Commercial Post-Production & Video Editor</title>
+    
+    <!-- We are bringing in GSAP (for animations) and Three.js (for the 3D background) from the internet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
         :root {
             --bg-color: #0b0b0c;
@@ -18,6 +24,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            cursor: none; /* We hide the default mouse pointer to use our custom one! */
         }
 
         body {
@@ -27,10 +34,47 @@
             letter-spacing: -0.01em;
             -webkit-font-smoothing: antialiased;
             padding: 0 40px;
+            overflow-x: hidden;
         }
 
         @media (max-width: 768px) {
-            body { padding: 0 20px; }
+            body { padding: 0 20px; cursor: auto; } /* Bring normal cursor back for phones */
+        }
+
+        /* 
+         This is the canvas where Three.js will draw our 3D particles. 
+         We lock it to the background so it stays behind the text. 
+        */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; 
+            pointer-events: none;
+        }
+
+        /* Custom Cursor Styling */
+        .cursor {
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none; /* Allows us to click *through* the custom cursor */
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+        }
+
+        .cursor.hover-effect {
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border: 1px solid var(--accent-color);
         }
 
         /* Minimal Floating Navigation */
@@ -42,58 +86,27 @@
             margin: 0 auto;
             padding: 40px 0;
             border-bottom: 1px solid var(--border-color);
+            opacity: 0; /* Hidden at start, GSAP will fade it in */
         }
 
-        nav .logo {
-            font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        nav .nav-links {
-            display: flex;
-            gap: 25px;
-        }
-
-        nav .contact-link {
-            color: var(--muted-color);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        nav .contact-link:hover, nav .contact-link.active {
-            color: var(--text-color);
-        }
+        nav .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        nav .nav-links { display: flex; gap: 25px; }
+        nav .contact-link { color: var(--muted-color); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s ease; }
+        nav .contact-link:hover { color: var(--text-color); }
 
         /* Hero/Profile Header */
         header {
             max-width: 1400px;
-            margin: 80px auto;
+            margin: 120px auto 80px auto;
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 40px;
+            opacity: 0; /* Hidden at start for animation */
         }
 
-        @media (max-width: 900px) {
-            header { grid-template-columns: 1fr; margin: 40px auto; }
-        }
-
-        header h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -0.04em;
-        }
-
-        header p {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            color: var(--muted-color);
-            align-self: end;
-        }
+        @media (max-width: 900px) { header { grid-template-columns: 1fr; margin: 60px auto; } }
+        header h1 { font-size: 3.5rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.04em; }
+        header p { font-size: 1.15rem; line-height: 1.6; color: var(--muted-color); align-self: end; }
 
         /* Section Headers */
         .section-title {
@@ -105,395 +118,271 @@
             color: var(--muted-color);
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
+            opacity: 0;
         }
 
-        /* Landscape Grid (16:9) */
-        .portfolio-grid {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-        }
+        /* Grids */
+        .portfolio-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        .reels-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        @media (max-width: 900px) { .portfolio-grid { grid-template-columns: 1fr; gap: 30px; } .reels-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+        @media (max-width: 600px) { .reels-grid { grid-template-columns: 1fr; } }
 
-        @media (max-width: 900px) {
-            .portfolio-grid { grid-template-columns: 1fr; gap: 30px; }
-        }
-
-        /* Short-Form Vertical Grid (9:16) */
-        .reels-grid {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 40px;
-        }
-
-        @media (max-width: 900px) {
-            .reels-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        }
-        @media (max-width: 600px) {
-            .reels-grid { grid-template-columns: 1fr; }
-        }
-
-        /* Corporate Editorial Links Layout */
-        .editorial-row {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .editorial-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 0;
-            border-bottom: 1px solid var(--border-color);
-            text-decoration: none;
-            color: inherit;
-            transition: opacity 0.2s ease;
-        }
-
-        .editorial-card:hover {
-            opacity: 0.8;
-        }
-
-        .editorial-card-left h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .editorial-card-left p {
-            font-size: 0.95rem;
-            color: var(--muted-color);
-            margin-top: 4px;
-        }
-
-        .editorial-card-right .arrow-btn {
-            font-size: 1.2rem;
-            color: var(--muted-color);
-        }
-
-        .work-item {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            background: #121214;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
+        /* Work Items */
+        .work-item { display: block; text-decoration: none; color: inherit; opacity: 0; transform: translateY(30px); }
+        .video-container { position: relative; width: 100%; background: #121214; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .landscape { aspect-ratio: 16 / 9; }
         .vertical { aspect-ratio: 9 / 16; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; pointer-events: auto; }
+        
+        .work-item:hover .video-container { transform: scale(1.02); border-color: #4a4a4c; }
+        .work-meta { margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .work-meta h3 { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; }
+        .work-meta p { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-color); margin-top: 2px; }
 
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
+        /* Corporate Row */
+        .editorial-row { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .editorial-card { display: flex; justify-content: space-between; align-items: center; padding: 30px 0; border-bottom: 1px solid var(--border-color); text-decoration: none; color: inherit; opacity: 0; transform: translateY(20px); }
+        .editorial-card-left h3 { font-size: 1.25rem; font-weight: 600; }
+        .editorial-card-left p { font-size: 0.95rem; color: var(--muted-color); margin-top: 4px; }
+        .editorial-card-right .arrow-btn { font-size: 1.2rem; color: var(--muted-color); transition: transform 0.3s; }
+        .editorial-card:hover .arrow-btn { transform: translate(5px, -5px); color: var(--text-color); }
 
-        .work-item:hover .video-container {
-            transform: scale(1.012);
-            border-color: #3a3a3c;
-        }
-
-        .work-meta {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .work-meta h3 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .work-meta p {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted-color);
-            margin-top: 2px;
-        }
-
-        /* Case Studies Layout */
-        .editorial-section {
-            max-width: 1400px;
-            margin: 120px auto;
-            border-top: 1px solid var(--border-color);
-            padding-top: 60px;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 60px;
-        }
-
-        @media (max-width: 900px) {
-            .editorial-section { grid-template-columns: 1fr; gap: 30px; margin: 60px auto; }
-        }
-
-        .editorial-section h2 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .editorial-content h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            letter-spacing: -0.02em;
-        }
-
-        .editorial-content ul {
-            list-style: none;
-            margin-bottom: 40px;
-        }
-
-        .editorial-content ul li {
-            font-size: 1.05rem;
-            line-height: 1.6;
-            color: var(--muted-color);
-            margin-bottom: 20px;
-            position: relative;
-            padding-left: 25px;
-        }
-
-        .editorial-content ul li::before {
-            content: "—";
-            position: absolute;
-            left: 0;
-            color: var(--muted-color);
-        }
-
-        .toolkit-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .toolkit-tags span {
-            font-size: 0.82rem;
-            font-weight: 500;
-            border: 1px solid var(--border-color);
-            padding: 6px 14px;
-            border-radius: 3px;
-            color: var(--muted-color);
-        }
-
-        /* Footer Call to Action */
-        footer {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 100px 0 60px 0;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        footer h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            margin-bottom: 20px;
-        }
-
-        footer .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        footer a {
-            color: var(--text-color);
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-bottom: 2px solid var(--text-color);
-            padding-bottom: 4px;
-            transition: opacity 0.2s ease;
-        }
-
-        footer a:hover {
-            opacity: 0.7;
-        }
+        /* Footer */
+        footer { max-width: 1400px; margin: 120px auto 60px auto; padding: 100px 0 60px 0; border-top: 1px solid var(--border-color); text-align: center; opacity: 0; }
+        footer h2 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 20px; }
+        footer .footer-links { display: flex; justify-content: center; gap: 30px; margin-top: 20px; }
+        footer a { color: var(--text-color); font-size: 1.1rem; font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--text-color); padding-bottom: 4px; }
     </style>
 </head>
 <body>
 
-    <nav>
+    <!-- The Custom Cursor -->
+    <div class="cursor" id="custom-cursor"></div>
+
+    <!-- The 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="gsap-nav">
         <div class="logo">Kem Billones</div>
         <div class="nav-links">
-            <a class="contact-link" href="https://tinyurl.com/n2dcuywr" target="_blank">IMDb Credits</a>
-            <a class="contact-link" href="mailto:kemuel.billones@gmail.com">kemuel.billones@gmail.com</a>
+            <a class="contact-link hover-target" href="https://tinyurl.com/n2dcuywr" target="_blank">IMDb Credits</a>
+            <a class="contact-link hover-target" href="mailto:kemuel.billones@gmail.com">kemuel.billones@gmail.com</a>
         </div>
     </nav>
 
-    <header>
+    <!-- Header -->
+    <header class="gsap-header">
         <h1>Post-Production Engineer & Multi-Cam Editor.</h1>
         <p>A decade mastering Broadcast Media, Post-Production engineering, and high-fidelity multitrack digital architectures. Specializing in rapid-turnaround footage rescue, forensic noise calibration, and invisible narrative pacing for global formats.</p>
     </header>
 
-    <h2 class="section-title">01 / Featured Video Work & Multi-Cam Masters</h2>
+    <h2 class="section-title gsap-fade">01 / Featured Video Work & Multi-Cam Masters</h2>
     <main class="portfolio-grid">
-        
-        <div class="work-item">
+        <div class="work-item gsap-reveal hover-target">
             <div class="video-container landscape">
                 <iframe src="https://www.youtube.com/embed/Bzhj_h4-kFQ?modestbranding=1&rel=0" allowfullscreen></iframe>
             </div>
             <div class="work-meta">
-                <div>
-                    <h3>Sofia Grainge | Postpartum Complications & PCOS</h3>
-                    <p>SHE MD Podcast</p>
-                </div>
+                <div><h3>Sofia Grainge | Postpartum Complications & PCOS</h3><p>SHE MD Podcast</p></div>
                 <p>Editor / Audio Post</p>
             </div>
         </div>
-
-        <div class="work-item">
+        <div class="work-item gsap-reveal hover-target">
             <div class="video-container landscape">
                 <iframe src="https://www.youtube.com/embed/FP4cLm-K8c4?modestbranding=1&rel=0" allowfullscreen></iframe>
             </div>
             <div class="work-meta">
-                <div>
-                    <h3>Jay Shetty | Passion and Finding Purpose</h3>
-                    <p>SHE MD Podcast</p>
-                </div>
+                <div><h3>Jay Shetty | Passion and Finding Purpose</h3><p>SHE MD Podcast</p></div>
                 <p>Editor / Audio Post</p>
             </div>
         </div>
-
     </main>
 
-    <h2 class="section-title">02 / Forensic Engineering & Sound Restoration</h2>
+    <h2 class="section-title gsap-fade">02 / Forensic Engineering & Sound Restoration</h2>
     <main class="portfolio-grid">
-        
-        <div class="work-item">
+        <div class="work-item gsap-reveal hover-target">
             <div class="video-container landscape">
                 <iframe src="https://www.youtube.com/embed/ZeXhLcCj3x8?modestbranding=1&rel=0" allowfullscreen></iframe>
             </div>
             <div class="work-meta">
-                <div>
-                    <h3>Spectral Audio Repair & Real-Time Isolation Demo</h3>
-                    <p>Engineering Showcase</p>
-                </div>
-                <p>DeNoise / DeVerb / EQ / Comp</p>
+                <div><h3>Spectral Audio Repair Demo</h3><p>Engineering Showcase</p></div>
+                <p>DeNoise / DeVerb</p>
             </div>
         </div>
-
-        <div style="display: flex; flex-direction: column; justify-content: center; border-left: 1px solid var(--border-color); padding-left: 40px;" class="editorial-content">
-            <h3 style="font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-color); margin-bottom: 10px;">Forensic Rescue Metrics</h3>
-            <p style="color: var(--text-color); font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">
-                Demonstrated tracking methodology for extreme signal remediation: targets multi-channel room echo, masking heavy low-frequency phase artifacts, and extracting bleed elements while maintaining pristine vocal transparency.
-            </p>
+        <div class="work-item gsap-reveal" style="display: flex; flex-direction: column; justify-content: center; padding-left: 20px;">
+            <p style="font-size: 1.1rem; line-height: 1.6; color: var(--muted-color);">Demonstrated tracking methodology for extreme signal remediation: targets multi-channel room echo, masking heavy low-frequency phase artifacts, and extracting bleed elements while maintaining pristine vocal transparency.</p>
         </div>
-
     </main>
 
-    <h2 class="section-title">03 / Corporate & Executive Podcast Production</h2>
+    <h2 class="section-title gsap-fade">03 / Corporate & Executive Podcast Production</h2>
     <section class="editorial-row">
-        
-        <a href="https://www.partneringleadership.com/how-to-lead-your-organization-through-change-to-achieve-hard-to-imagine-results-in-uncertain-and-volatile-times-with-john-kotter-global-thought-leader/" target="_blank" class="editorial-card">
+        <a href="https://www.partneringleadership.com/how-to-lead-your-organization-through-change-to-achieve-hard-to-imagine-results-in-uncertain-and-volatile-times-with-john-kotter-global-thought-leader/" target="_blank" class="editorial-card gsap-reveal hover-target">
             <div class="editorial-card-left">
                 <h3>Partnering Leadership Podcast — John Kotter Feature</h3>
                 <p>Full Audio Engineering, Master Leveling, Narrative Structure, and Executive Production for Global Thought Leadership Systems.</p>
             </div>
-            <div class="editorial-card-right">
-                <span class="arrow-btn">↗</span>
-            </div>
+            <div class="editorial-card-right"><span class="arrow-btn">↗</span></div>
         </a>
-
     </section>
 
-    <h2 class="section-title">04 / Short-Form High-Engagement Reels</h2>
+    <h2 class="section-title gsap-fade">04 / Short-Form High-Engagement Reels</h2>
     <section class="reels-grid">
-        
-        <div class="work-item">
-            <div class="video-container vertical">
-                <iframe src="https://www.instagram.com/reel/CyLmD7psw44/embed" allowfullscreen></iframe>
-            </div>
-            <div class="work-meta">
-                <div>
-                    <h3>Creative Cutdown / Micro-Narrative 01</h3>
-                    <p>Social Campaign</p>
-                </div>
-                <p>9:16 Edit</p>
-            </div>
+        <div class="work-item gsap-reveal hover-target">
+            <div class="video-container vertical"><iframe src="https://www.instagram.com/reel/CyLmD7psw44/embed" allowfullscreen></iframe></div>
+            <div class="work-meta"><div><h3>Micro-Narrative 01</h3><p>Social Campaign</p></div><p>9:16 Edit</p></div>
         </div>
-
-        <div class="work-item">
-            <div class="video-container vertical">
-                <iframe src="https://www.instagram.com/reel/Cy4HVfvB0r9/embed" allowfullscreen></iframe>
-            </div>
-            <div class="work-meta">
-                <div>
-                    <h3>Creative Cutdown / Micro-Narrative 02</h3>
-                    <p>Social Campaign</p>
-                </div>
-                <p>9:16 Edit</p>
-            </div>
+        <div class="work-item gsap-reveal hover-target">
+            <div class="video-container vertical"><iframe src="https://www.instagram.com/reel/Cy4HVfvB0r9/embed" allowfullscreen></iframe></div>
+            <div class="work-meta"><div><h3>Micro-Narrative 02</h3><p>Social Campaign</p></div><p>9:16 Edit</p></div>
         </div>
-
-        <div class="work-item">
-            <div class="video-container vertical">
-                <iframe src="https://www.instagram.com/reel/CyOhMdrClg4/embed" allowfullscreen></iframe>
-            </div>
-            <div class="work-meta">
-                <div>
-                    <h3>Creative Cutdown / Micro-Narrative 03</h3>
-                    <p>Social Campaign</p>
-                </div>
-                <p>9:16 Edit</p>
-            </div>
-        </div>
-
-    </section>
-
-    <section class="editorial-section">
-        <h2>Production<br>Rescue</h2>
-        <div class="editorial-content">
-            <h3>Case Study: Managing High-Profile Multitrack Sessions Under Pressure</h3>
-            <ul>
-                <li><strong>Mismatched Asset Synchronization:</strong> Aligned raw multitrack delivery loads involving 5 concurrent 4K video feeds alongside distinct unlinked multi-microphone channels.</li>
-                <li><strong>Forensic Audio Restoration:</strong> Remediated critical tracking issues on the fly, eliminating heavy ambient room acoustic echoes, erratic gain stages, and bleed signals across open multi-channel arrays via advanced spectral repair pipelines.</li>
-                <li><strong>Color Timing & Balancing:</strong> Re-calibrated uncorrected logs lacking reference gray/white calibration targets to maintain flawless, matching skin tones under strict broadcast guidelines.</li>
-                <li><strong>Structural Narrative Pacing:</strong> Condensed 1.5 to 2 hours of unscripted raw conversational elements into high-impact sub-60-minute masters while defending rhythm and comedic timing.</li>
-                <li><strong>Invisible Continuity Stitching:</strong> Covered intrusive structural timing adjustments requested by clients by constructing fluid audio crossovers and deploying multi-cam reaction layers to mask aggressive timeline jumps.</li>
-            </ul>
-            <div class="toolkit-tags">
-                <span>Avid Pro Tools</span>
-                <span>DaVinci Resolve</span>
-                <span>Adobe Premiere Pro</span>
-                <span>iZotope RX8</span>
-                <span>Acon Digital</span>
-                <span>Waves Audio</span>
-            </div>
+        <div class="work-item gsap-reveal hover-target">
+            <div class="video-container vertical"><iframe src="https://www.instagram.com/reel/CyOhMdrClg4/embed" allowfullscreen></iframe></div>
+            <div class="work-meta"><div><h3>Micro-Narrative 03</h3><p>Social Campaign</p></div><p>9:16 Edit</p></div>
         </div>
     </section>
 
-    <footer>
+    <footer class="gsap-footer">
         <h2>Let's build something clean.</h2>
         <div class="footer-links">
-            <a href="mailto:kemuel.billones@gmail.com">Email</a>
-            <a href="https://tinyurl.com/n2dcuywr" target="_blank">IMDb Profile</a>
+            <a href="mailto:kemuel.billones@gmail.com" class="hover-target">Email</a>
+            <a href="https://tinyurl.com/n2dcuywr" target="_blank" class="hover-target">IMDb Profile</a>
         </div>
     </footer>
 
+    <!-- INTERACTIVITY JAVASCRIPT -->
+    <script>
+        // ==========================================
+        // 1. THE CUSTOM CURSOR
+        // ==========================================
+        // We grab the cursor element we created in HTML
+        const cursor = document.getElementById('custom-cursor');
+        
+        // Every time the mouse moves, we update the cursor's top and left position to follow it.
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // We want the cursor to expand when it hovers over links or videos.
+        // We find all elements with the class 'hover-target'
+        const hoverTargets = document.querySelectorAll('.hover-target, a');
+        
+        hoverTargets.forEach(target => {
+            // When mouse enters the target, add a CSS class that makes it bigger and hollow
+            target.addEventListener('mouseenter', () => cursor.classList.add('hover-effect'));
+            // When mouse leaves, remove the class to shrink it back
+            target.addEventListener('mouseleave', () => cursor.classList.remove('hover-effect'));
+        });
+
+        // ==========================================
+        // 2. THREE.JS 3D BACKGROUND (Cinematic Dust)
+        // ==========================================
+        // Think of a 3D scene like a movie set. 
+        // We need a Scene (the room), a Camera (our eyes), and a Renderer (the projector).
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true }); // alpha: true makes the background transparent
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio); // Keeps it sharp on retina screens
+        
+        // Now we make the "dust particles".
+        // We create an empty geometry object to hold 1000 tiny dots.
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        
+        // We need X, Y, and Z coordinates for every single particle, so we multiply by 3.
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i++) {
+            // Math.random() generates a number. We subtract 0.5 to center the particles around the screen.
+            posArray[i] = (Math.random() - 0.5) * 10; 
+        }
+        
+        // We attach our positions to the geometry.
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        
+        // We define what the particles look like (white, very small).
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.005,
+            color: '#ffffff',
+            transparent: true,
+            opacity: 0.4
+        });
+        
+        // We combine the geometry and the material into a mesh, and add it to our scene.
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        
+        // Move the camera back slightly so we can see the particles.
+        camera.position.z = 2;
+
+        // The Animation Loop: This function runs 60 times a second.
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            // Slowly rotate the entire cloud of particles on the Y and X axis.
+            particlesMesh.rotation.y += 0.0005;
+            particlesMesh.rotation.x += 0.0002;
+            // Draw the frame.
+            renderer.render(scene, camera);
+        }
+        animateThree();
+
+        // If the user resizes their browser window, we update the camera and canvas size so it doesn't squish.
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ==========================================
+        // 3. GSAP SCROLL ANIMATIONS
+        // ==========================================
+        // We tell GSAP to activate its ScrollTrigger tool.
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Animation 1: The Intro Load
+        // When the page first loads, slide the nav and header up and fade them in.
+        gsap.to(".gsap-nav", { opacity: 1, duration: 1.5, ease: "power3.out" });
+        gsap.to(".gsap-header", { opacity: 1, y: 0, duration: 1.5, delay: 0.3, ease: "power3.out" });
+
+        // Animation 2: Section Titles
+        // Loop through all titles and fade them in when they scroll into view.
+        gsap.utils.toArray(".gsap-fade").forEach(title => {
+            gsap.to(title, {
+                scrollTrigger: {
+                    trigger: title,
+                    start: "top 85%", // Starts animating when the top of the title is 85% down the screen
+                },
+                opacity: 1,
+                duration: 1
+            });
+        });
+
+        // Animation 3: The Video Grids and Cards
+        // Loop through everything labeled 'gsap-reveal' and slide it up smoothly.
+        gsap.utils.toArray(".gsap-reveal").forEach(item => {
+            gsap.to(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 90%", 
+                },
+                opacity: 1,
+                y: 0, // Slide back to its original position
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+
+        // Animation 4: Footer
+        gsap.to(".gsap-footer", {
+            scrollTrigger: { trigger: ".gsap-footer", start: "top 90%" },
+            opacity: 1,
+            duration: 1.5
+        });
+
+    </script>
 </body>
 </html>
